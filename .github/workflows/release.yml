@@ -1,0 +1,54 @@
+name: Build macOS release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      - name: Build iVoz
+        run: swift build --configuration release
+
+      - name: Package app
+        shell: bash
+        run: |
+          set -euo pipefail
+          app="dist/iVoz.app"
+          contents="$app/Contents"
+          mkdir -p "$contents/MacOS" "$contents/Resources" "$contents/Frameworks"
+          cp .build/release/HikariYaps "$contents/MacOS/HikariYaps"
+          cp Packaging/Info.plist "$contents/Info.plist"
+          printf 'APPL????' > "$contents/PkgInfo"
+
+          resource_bundle="$(find .build -type d -name 'HikariYaps_HikariYaps.bundle' -print -quit)"
+          if [[ -n "$resource_bundle" ]]; then
+            ditto "$resource_bundle" "$contents/Resources/$(basename "$resource_bundle")"
+          fi
+
+          llama_framework="$(find .build -type d -path '*/release/llama.framework' -print -quit)"
+          if [[ -z "$llama_framework" ]]; then
+            echo 'llama.framework was not produced by the release build' >&2
+            exit 1
+          fi
+          ditto "$llama_framework" "$contents/Frameworks/llama.framework"
+          install_name_tool -add_rpath @executable_path/../Frameworks "$contents/MacOS/HikariYaps"
+          codesign --force --deep --sign - "$app"
+          ditto -c -k --sequesterRsrc --keepParent "$app" dist/iVoz-macOS-arm64.zip
+
+      - name: Publish release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: dist/iVoz-macOS-arm64.zip

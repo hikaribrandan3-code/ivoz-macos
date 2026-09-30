@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="iVoz is free, open-source voice dictation for macOS. Transcribe and clean up speech locally on your Mac.">
+  <title>iVoz — Your voice, already typed</title>
+  <style>
+    :root{color-scheme:dark;--bg:#101114;--panel:#191b20;--line:#2b2e35;--text:#f5f4f0;--muted:#aaaeb8;--gold:#f2bd55;--green:#8bd6ae;--max:1100px}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 78% 0%,#27231c 0,transparent 40%),var(--bg);color:var(--text);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:inherit}header,main,footer{width:min(var(--max),calc(100% - 40px));margin:auto}header{height:84px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff12}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-size:20px;font-weight:700}.mark{width:36px;height:36px;border-radius:12px;background:var(--gold);color:#21190d;display:grid;place-items:center;font-size:20px}.nav{display:flex;align-items:center;gap:25px}.nav a{text-decoration:none;color:var(--muted);font-size:14px}.nav a:hover{color:var(--text)}.hero{padding:94px 0 82px;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}.eyebrow{color:var(--green);letter-spacing:.14em;text-transform:uppercase;font-size:12px;font-weight:700}.hero h1{font-size:clamp(46px,7vw,76px);letter-spacing:-.055em;line-height:.98;margin:18px 0 22px}.hero p{font-size:19px;color:var(--muted);max-width:560px}.actions{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 16px}.button{display:inline-flex;align-items:center;justify-content:center;padding:13px 19px;border-radius:11px;font-weight:700;text-decoration:none}.primary{background:var(--gold);color:#21190d}.secondary{border:1px solid #ffffff35;color:var(--text)}.meta{font-size:13px;color:#858994}.visual{min-height:320px;border:1px solid #ffffff18;border-radius:24px;background:linear-gradient(145deg,#25272c,#141519 75%);padding:25px;box-shadow:0 25px 80px #0008;display:flex;flex-direction:column;justify-content:space-between}.windowbar{display:flex;gap:7px}.dot{width:9px;height:9px;background:#4b4e55;border-radius:50%}.wave{height:100px;display:flex;align-items:center;justify-content:center;gap:5px}.wave i{display:block;width:5px;border-radius:5px;background:var(--gold);height:22px}.wave i:nth-child(3n){height:52px}.wave i:nth-child(4n){height:76px}.wave i:nth-child(5n){height:34px}.transcript{border:1px solid var(--line);border-radius:14px;padding:16px;color:#d8d9dd;background:#111216}.transcript span{color:var(--green)}.section{padding:40px 0 86px}.section h2{font-size:34px;letter-spacing:-.03em;margin:0 0 12px}.lead{color:var(--muted);max-width:690px;margin:0 0 28px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{border:1px solid var(--line);background:#17191d;border-radius:16px;padding:22px}.card h3{margin:0 0 8px;font-size:17px}.card p{margin:0;color:var(--muted);font-size:14px}.stack{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}.stack span{font-size:12px;color:#ddd;background:#ffffff0c;border:1px solid #ffffff14;border-radius:99px;padding:5px 10px}.callout{display:flex;justify-content:space-between;align-items:center;gap:22px;border:1px solid #66532e;background:#211e18;border-radius:18px;padding:25px}.callout p{margin:3px 0 0;color:var(--muted)}footer{padding:28px 0 46px;border-top:1px solid #ffffff18;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:18px}footer a{color:var(--muted)}
+    @media(max-width:760px){.hero{grid-template-columns:1fr;padding:65px 0 60px;gap:28px}.visual{min-height:260px}.grid{grid-template-columns:1fr}.nav{gap:14px}.nav a:first-child{display:none}.callout{align-items:flex-start;flex-direction:column}footer{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="#top"><span class="mark">iV</span> iVoz</a>
+    <nav class="nav" aria-label="Main navigation"><a href="#features">Features</a><a href="#privacy">Privacy</a><a href="https://github.com/hikaribrandan3-code/ivoz-macos">Source</a></nav>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Free · Open source · On-device</div>
+        <h1>Your voice,<br>already typed.</h1>
+        <p>Hold a key, speak naturally, and get polished text in the app you’re using. iVoz runs speech recognition and optional cleanup locally on your Mac.</p>
+        <div class="actions"><a class="button primary" href="https://github.com/hikaribrandan3-code/ivoz-macos/releases/latest">Download for Apple silicon</a><a class="button secondary" href="https://github.com/hikaribrandan3-code/ivoz-macos">Explore the source</a></div>
+        <div class="meta">macOS 14+ · Apple silicon · No account or subscription</div>
+      </div>
+      <div class="visual" role="img" aria-label="iVoz dictation interface illustration">
+        <div class="windowbar"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+        <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="transcript">“Make the words sound like me, then put them where I’m working.”<br><span>Ready to insert</span></div>
+      </div>
+    </section>
+    <section class="section" id="features">
+      <div class="eyebrow">A focused Mac utility</div>
+      <h2>Speak once. Keep your flow.</h2>
+      <p class="lead">iVoz is built for everyday writing, support replies, notes, and code comments. Your recordings are processed on-device, without sending voice or transcripts to a cloud service.</p>
+      <div class="grid">
+        <article class="card"><h3>Local speech recognition</h3><p>WhisperKit runs Whisper with Core ML on Apple silicon. Download the model once, then dictate offline.</p></article>
+        <article class="card"><h3>Optional local cleanup</h3><p>Use a local language model to remove filler words and polish grammar. Cleanup can be turned off.</p></article>
+        <article class="card"><h3>Made for your workflow</h3><p>Set a global hotkey, add custom vocabulary and snippets, choose a tone, and search or export your history.</p></article>
+      </div>
+      <div class="stack" aria-label="Technology stack"><span>Swift</span><span>SwiftUI</span><span>AppKit</span><span>WhisperKit</span><span>Core ML</span><span>llama.cpp</span><span>Metal</span></div>
+    </section>
+    <section class="section" id="privacy">
+      <div class="callout"><div><h2>Yours to use, yours to improve.</h2><p>iVoz is MIT-licensed. Audio and transcripts stay on your Mac; model files download from their upstream sources.</p></div><a class="button secondary" href="https://github.com/hikaribrandan3-code/ivoz-macos">View code on GitHub</a></div>
+    </section>
+  </main>
+  <footer><span>© 2026 iVoz · Built by Daiske Brandan</span><span><a href="https://github.com/hikaribrandan3-code/ivoz-macos">GitHub</a> · <a href="https://github.com/hikaribrandan3-code/ivoz-macos/releases">Releases</a></span></footer>
+</body>
+</html>
