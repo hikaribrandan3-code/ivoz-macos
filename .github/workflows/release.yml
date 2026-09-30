@@ -27,9 +27,12 @@ jobs:
           set -euo pipefail
           app="dist/iVoz.app"
           contents="$app/Contents"
+          swift Packaging/make-icon.swift dist/iVoz.iconset
+          iconutil -c icns dist/iVoz.iconset -o dist/AppIcon.icns
           mkdir -p "$contents/MacOS" "$contents/Resources" "$contents/Frameworks"
           cp .build/release/HikariYaps "$contents/MacOS/HikariYaps"
           cp Packaging/Info.plist "$contents/Info.plist"
+          cp dist/AppIcon.icns "$contents/Resources/AppIcon.icns"
           printf 'APPL????' > "$contents/PkgInfo"
 
           resource_bundle="$(find .build -type d -name 'HikariYaps_HikariYaps.bundle' -print -quit)"
