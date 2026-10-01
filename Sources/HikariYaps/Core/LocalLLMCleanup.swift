@@ -81,7 +81,7 @@ final class LocalLLMCleanup: ObservableObject {
         if !isDownloaded {
             state = .downloading(progress: 0)
             do {
-                try await Self.downloadResumable(from: Self.modelURL, to: path, expectedBytes: Self.expectedBytes) { progress in
+                try await Self.downloadResumable(from: Self.modelURL, to: path, expectedBytes: Self.expectedBytes) { [weak self] progress in
                     Task { @MainActor [weak self] in
                         guard let self, case .downloading = self.state else { return }
                         self.state = .downloading(progress: progress)

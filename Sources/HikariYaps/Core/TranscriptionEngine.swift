@@ -97,7 +97,7 @@ final class TranscriptionEngine: ObservableObject {
                     variant: variant,
                     downloadBase: Self.modelsDirectory,
                     useBackgroundSession: false
-                ) { progress in
+                ) { [weak self] progress in
                     Task { @MainActor [weak self] in
                         guard let self, self.loadedVariant != variant else { return }
                         if case .downloading = self.state {

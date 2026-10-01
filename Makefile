@@ -1,19 +1,15 @@
 # iVoz — build & packaging
 #
-# This machine's Command Line Tools install is broken (a stale
-# PackageDescription.private.swiftinterface and a duplicated SwiftBridging
-# modulemap left over from an older CLT). The two exports below work around
-# it without touching system files:
-#   * SWIFTPM_CUSTOM_LIBS_DIR — corrected manifest libraries (stale private
-#     interfaces removed)
-#   * SWIFT_EXEC — a swiftc wrapper that appends a VFS overlay masking the
-#     duplicate modulemap
-# If you install full Xcode (or Apple fixes the CLT), delete TOOLCHAIN_FIX
-# below and everything still works.
+# Standard Xcode builds use the normal Swift toolchain. Set
+# USE_TOOLCHAIN_FIX=1 only on the affected developer Command Line Tools setup.
 
 TOOLCHAIN_FIX := $(HOME)/.hikari-swiftpm-libs
+ifeq ($(USE_TOOLCHAIN_FIX),1)
 export SWIFTPM_CUSTOM_LIBS_DIR := $(TOOLCHAIN_FIX)
 export SWIFT_EXEC := $(TOOLCHAIN_FIX)/swiftc
+BUILD_DEPS := toolchain-fix
+ICON_SWIFT_FLAGS := -vfsoverlay $(TOOLCHAIN_FIX)/mask.yaml
+endif
 
 APP_NAME := HikariYaps
 BUNDLE   := dist/iVoz.app
@@ -27,7 +23,7 @@ all: app
 toolchain-fix:
 	@test -x $(TOOLCHAIN_FIX)/swiftc || ./Packaging/setup-toolchain-fix.sh
 
-build: toolchain-fix
+build: $(BUILD_DEPS)
 	swift build -c release
 
 app: build icon
@@ -50,10 +46,10 @@ app: build icon
 
 icon: dist/AppIcon.icns
 
-dist/AppIcon.icns: Packaging/make-icon.swift
+dist/AppIcon.icns: Packaging/make-icon.swift $(BUILD_DEPS)
 	mkdir -p dist
 	rm -rf dist/AppIcon.iconset
-	swift -vfsoverlay $(TOOLCHAIN_FIX)/mask.yaml Packaging/make-icon.swift dist/AppIcon.iconset
+	swift $(ICON_SWIFT_FLAGS) Packaging/make-icon.swift dist/AppIcon.iconset
 	iconutil -c icns dist/AppIcon.iconset -o dist/AppIcon.icns
 
 run: app

@@ -325,7 +325,11 @@ final class TextInjector {
         let pasteboard = NSPasteboard.general
         let saved = snapshot(of: pasteboard)
         pasteboard.clearContents()
-        pasteboard.setString(text, forType: .string)
+        guard pasteboard.setString(text, forType: .string) else {
+            restore(saved, to: pasteboard)
+            return false
+        }
+        let transcriptChangeCount = pasteboard.changeCount
 
         guard NSWorkspace.shared.frontmostApplication?.processIdentifier == target.processIdentifier else {
             // Last-line-of-defense check right before pasting. We already
@@ -333,21 +337,26 @@ final class TextInjector {
             // contents — the transcript is safe in History; the user's copied
             // password/file/text is not replaceable.
             logger.notice("strategyC: target no longer frontmost, restoring clipboard")
-            restore(saved, to: pasteboard)
+            restoreIfUnchanged(saved, to: pasteboard, expectedChangeCount: transcriptChangeCount)
             return false
         }
 
         try? await Task.sleep(nanoseconds: 60_000_000)
-        synthesizeCommandV()
+        guard NSWorkspace.shared.frontmostApplication?.processIdentifier == target.processIdentifier,
+              pasteboard.changeCount == transcriptChangeCount,
+              synthesizeCommandV() else {
+            restoreIfUnchanged(saved, to: pasteboard, expectedChangeCount: transcriptChangeCount)
+            return false
+        }
         try? await Task.sleep(nanoseconds: 400_000_000)
-        restore(saved, to: pasteboard)
+        restoreIfUnchanged(saved, to: pasteboard, expectedChangeCount: transcriptChangeCount)
         return true
     }
 
     /// Synthesizes the full Cmd+V sequence: Cmd down → V down → V up → Cmd up.
     /// The V events carry the .maskCommand flag so the OS sees them as Cmd+V.
-    private func synthesizeCommandV() {
-        guard let source = CGEventSource(stateID: .combinedSessionState) else { return }
+    private func synthesizeCommandV() -> Bool {
+        guard let source = CGEventSource(stateID: .combinedSessionState) else { return false }
         source.setLocalEventsFilterDuringSuppressionState(
             [.permitLocalMouseEvents, .permitSystemDefinedEvents],
             state: .eventSuppressionStateSuppressionInterval
@@ -356,18 +365,20 @@ final class TextInjector {
         let cmdKey = CGKeyCode(kVK_Command)
         let vKey = CGKeyCode(kVK_ANSI_V)
 
-        let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: cmdKey, keyDown: true)
-        let vDown = CGEvent(keyboardEventSource: source, virtualKey: vKey, keyDown: true)
-        let vUp = CGEvent(keyboardEventSource: source, virtualKey: vKey, keyDown: false)
-        let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: cmdKey, keyDown: false)
+        guard let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: cmdKey, keyDown: true),
+              let vDown = CGEvent(keyboardEventSource: source, virtualKey: vKey, keyDown: true),
+              let vUp = CGEvent(keyboardEventSource: source, virtualKey: vKey, keyDown: false),
+              let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: cmdKey, keyDown: false)
+        else { return false }
 
-        vDown?.flags = .maskCommand
-        vUp?.flags = .maskCommand
+        vDown.flags = .maskCommand
+        vUp.flags = .maskCommand
 
-        cmdDown?.post(tap: .cghidEventTap)
-        vDown?.post(tap: .cghidEventTap)
-        vUp?.post(tap: .cghidEventTap)
-        cmdUp?.post(tap: .cghidEventTap)
+        cmdDown.post(tap: .cghidEventTap)
+        vDown.post(tap: .cghidEventTap)
+        vUp.post(tap: .cghidEventTap)
+        cmdUp.post(tap: .cghidEventTap)
+        return true
     }
 
     // MARK: - Clipboard helpers
@@ -395,8 +406,8 @@ final class TextInjector {
     }
 
     private func restore(_ saved: [[NSPasteboard.PasteboardType: Data]], to pasteboard: NSPasteboard) {
-        guard !saved.isEmpty else { return }
         pasteboard.clearContents()
+        guard !saved.isEmpty else { return }
         let items = saved.map { entry -> NSPasteboardItem in
             let item = NSPasteboardItem()
             for (type, data) in entry {
@@ -405,6 +416,16 @@ final class TextInjector {
             return item
         }
         pasteboard.writeObjects(items)
+    }
+
+    /// Do not overwrite a clipboard change the user made while dictation was pasting.
+    private func restoreIfUnchanged(
+        _ saved: [[NSPasteboard.PasteboardType: Data]],
+        to pasteboard: NSPasteboard,
+        expectedChangeCount: Int
+    ) {
+        guard pasteboard.changeCount == expectedChangeCount else { return }
+        restore(saved, to: pasteboard)
     }
 
     // MARK: - Logging
