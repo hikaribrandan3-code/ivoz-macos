@@ -65,3 +65,7 @@ The iVoz source code is released under the MIT License. Third-party packages kee
 
 - Product page: [ivoz-macos-site.vercel.app](https://ivoz-macos-site.vercel.app)
 - Source and issue tracker: [github.com/hikaribrandan3-code/ivoz-macos](https://github.com/hikaribrandan3-code/ivoz-macos)
+
+## Portfolio evidence
+
+[Mac app suite case study](https://hikari-brandan.vercel.app/projects/macos-app-suite) documents the product story and current limits.
